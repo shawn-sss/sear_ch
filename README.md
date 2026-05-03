@@ -18,7 +18,7 @@
 
 ```bash
 cp .env.example .env
-python3 -m sear_ch.web.server
+python3 -m src.web.server
 ```
 
 Default local URLs:

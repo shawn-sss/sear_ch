@@ -9,7 +9,7 @@ try:
 except ModuleNotFoundError as exc:
     raise RuntimeError(
         "FastAPI is optional. Install `sear_ch[fastapi]` to use this entrypoint, "
-        "or run `python3 -m sear_ch.web.server` for the built-in server."
+        "or run `python3 -m src.web.server` for the built-in server."
     ) from exc
 
 from ..core.api import build_health_payload, build_providers_payload

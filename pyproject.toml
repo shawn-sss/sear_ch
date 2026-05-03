@@ -17,16 +17,16 @@ fastapi = [
 ]
 
 [project.scripts]
-sear_ch = "sear_ch.web.server:run"
+sear_ch = "src.web.server:run"
 
 [tool.setuptools]
 include-package-data = true
 
 [tool.setuptools.packages.find]
-include = ["sear_ch*"]
+include = ["src*"]
 
 [tool.setuptools.package-data]
-sear_ch = [
+src = [
   "static/*.html",
   "static/*.css",
   "static/*.js",
