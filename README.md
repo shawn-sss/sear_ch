@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="screenshot.png" alt="sear_ch" width="360">
+    <img width="1200" height="475" src="screenshot.jpg" alt="Screenshot">
 </p>
 
 # sear_ch
