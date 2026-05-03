@@ -1,0 +1,38 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sear_ch"
+version = "1.0"
+description = "A self-hosted web app for AI-augmented private search."
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = []
+
+[project.optional-dependencies]
+fastapi = [
+  "fastapi>=0.116.0,<1.0.0",
+  "uvicorn[standard]>=0.35.0,<1.0.0",
+]
+
+[project.scripts]
+sear_ch = "sear_ch.web.server:run"
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.packages.find]
+include = ["sear_ch*"]
+
+[tool.setuptools.package-data]
+sear_ch = [
+  "static/*.html",
+  "static/*.css",
+  "static/*.js",
+  "static/*.txt",
+  "static/js/*.js",
+  "static/js/app/*.js",
+  "static/*.webmanifest",
+  "static/assets/*",
+]

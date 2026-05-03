@@ -1,0 +1,28 @@
+{
+  "id": "/",
+  "name": "sear_ch",
+  "short_name": "sear_ch",
+  "description": "sear_ch is a self-hosted web app for AI-augmented private search.",
+  "lang": "en-US",
+  "dir": "ltr",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "display_override": ["standalone", "browser"],
+  "categories": ["productivity", "utilities"],
+  "background_color": "#faf8f1",
+  "theme_color": "#faf8f1",
+  "prefer_related_applications": false,
+  "icons": [
+    {
+      "src": "/static/assets/sear_ch-mark.png",
+      "sizes": "1024x1024",
+      "type": "image/png"
+    },
+    {
+      "src": "/static/assets/favicon.png",
+      "sizes": "1024x1024",
+      "type": "image/png"
+    }
+  ]
+}

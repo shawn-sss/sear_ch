@@ -1,0 +1,1871 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>sear_ch</title>
+    <meta
+      name="description"
+      content="sear_ch is a self-hosted web app for AI-augmented private search."
+    >
+    <meta name="robots" content="noindex,nofollow,noarchive">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
+    <meta name="application-name" content="sear_ch">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="sear_ch">
+    <meta name="color-scheme" content="light dark">
+    <meta name="darkreader-lock">
+    <meta name="theme-color" content="#faf8f1">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="sear_ch">
+    <meta property="og:title" content="sear_ch">
+    <meta property="og:description" content="sear_ch is a self-hosted web app for AI-augmented private search.">
+    <meta property="og:locale" content="en_US">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="sear_ch">
+    <meta name="twitter:description" content="sear_ch is a self-hosted web app for AI-augmented private search.">
+    <link rel="icon" type="image/png" sizes="16x16" href="/static/assets/favicon-16.png?v=4">
+    <link rel="icon" type="image/png" sizes="32x32" href="/static/assets/favicon-32.png?v=4">
+    <link rel="icon" type="image/png" href="/static/assets/favicon.png?v=4">
+    <link rel="apple-touch-icon" href="/static/assets/apple-touch-icon.png">
+    <link rel="manifest" href="/static/site.webmanifest">
+    <script src="/static/app-config.js"></script>
+    <script>
+      (() => {
+        const DARK_READER_SELECTOR = [
+          'style.darkreader',
+          'style[id^="darkreader"]',
+          'style[id^="dark-reader"]',
+          'link.darkreader',
+          'link[id^="darkreader"]',
+          'link[id^="dark-reader"]',
+          'meta[name="darkreader"]',
+        ].join(",");
+
+        const removeDarkReaderArtifacts = () => {
+          const injectedNodes = Array.from(document.querySelectorAll(DARK_READER_SELECTOR));
+          injectedNodes.forEach((node) => {
+            node.remove();
+          });
+
+          document.documentElement.removeAttribute("data-darkreader-mode");
+          document.documentElement.removeAttribute("data-darkreader-scheme");
+          document.body?.removeAttribute("data-darkreader-mode");
+          document.body?.removeAttribute("data-darkreader-scheme");
+          if (injectedNodes.length) {
+            document.documentElement.dataset.darkreaderBlocked = "true";
+          }
+        };
+
+        removeDarkReaderArtifacts();
+        const darkReaderObserver = new MutationObserver(() => {
+          removeDarkReaderArtifacts();
+        });
+        if (document.head) {
+          darkReaderObserver.observe(document.head, {
+            childList: true,
+            subtree: true,
+          });
+        }
+        darkReaderObserver.observe(document.documentElement, {
+          childList: true,
+          subtree: true,
+          attributes: true,
+          attributeFilter: ["data-darkreader-mode", "data-darkreader-scheme"],
+        });
+
+        const defaultConfig = typeof window.SEAR_CH_DEFAULT_CONFIG === "object" && window.SEAR_CH_DEFAULT_CONFIG
+          ? window.SEAR_CH_DEFAULT_CONFIG
+          : {};
+        const config = typeof window.SEAR_CH_CONFIG === "object" && window.SEAR_CH_CONFIG
+          ? window.SEAR_CH_CONFIG
+          : defaultConfig;
+        const appName = String(config.appName || defaultConfig.appName || "sear_ch").trim() || "sear_ch";
+        const metaDescription = String(
+          config.metaDescription || defaultConfig.metaDescription || "sear_ch is a self-hosted web app for AI-augmented private search.",
+        ).trim();
+        const preferencesKey = String(config.preferencesKey || defaultConfig.preferencesKey || "sear_ch.preferences.v1");
+        const themeColorLight = String(config.themeColorLight || defaultConfig.themeColorLight || "#faf8f1").trim() || "#faf8f1";
+        const themeColorDark = String(config.themeColorDark || defaultConfig.themeColorDark || "#202124").trim() || "#202124";
+        const robotsContent = String(config.robots || defaultConfig.robots || "noindex,nofollow,noarchive").trim() || "noindex,nofollow,noarchive";
+
+        document.title = appName;
+        document.querySelector('meta[name="description"]')?.setAttribute("content", metaDescription);
+        document.querySelector('meta[name="robots"]')?.setAttribute("content", robotsContent);
+        document.querySelector('meta[name="application-name"]')?.setAttribute("content", appName);
+        document.querySelector('meta[name="apple-mobile-web-app-title"]')?.setAttribute("content", appName);
+        document.querySelector('meta[name="theme-color"]')?.setAttribute("content", themeColorLight);
+        document.querySelector('meta[property="og:site_name"]')?.setAttribute("content", appName);
+        document.querySelector('meta[property="og:title"]')?.setAttribute("content", appName);
+        document.querySelector('meta[property="og:description"]')?.setAttribute("content", metaDescription);
+        document.querySelector('meta[name="twitter:title"]')?.setAttribute("content", appName);
+        document.querySelector('meta[name="twitter:description"]')?.setAttribute("content", metaDescription);
+
+        try {
+          const raw = window.localStorage.getItem(preferencesKey);
+          if (!raw) {
+            return;
+          }
+
+          const parsed = JSON.parse(raw);
+          const theme = parsed?.theme;
+          if (theme !== "light" && theme !== "dark") {
+            return;
+          }
+
+          document.documentElement.dataset.theme = theme;
+          document.documentElement.style.colorScheme = theme;
+          document.querySelector('meta[name="theme-color"]')?.setAttribute(
+            "content",
+            theme === "dark" ? themeColorDark : themeColorLight,
+          );
+        } catch {}
+      })();
+    </script>
+    <link rel="stylesheet" href="/static/styles.css">
+    <script type="module" src="/static/app.js"></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Skip to main content</a>
+    <div class="page-shell" data-view="home">
+      <header class="topbar">
+        <nav class="topbar-side topbar-left" aria-label="sear_ch secondary">
+          <button
+            type="button"
+            class="nav-button nav-link-button topbar-about-link"
+            data-open-panel="about"
+            aria-haspopup="dialog"
+            aria-controls="about-panel"
+            aria-expanded="false"
+          >About</button>
+        </nav>
+
+        <div class="topbar-center">
+          <a href="/" class="wordmark-mini" aria-label="sear_ch home">
+            <img
+              src="/static/assets/sear_ch-wordmark-results-on-light.png"
+              alt=""
+              class="wordmark-mini-image theme-wordmark theme-wordmark-on-light"
+              decoding="async"
+            >
+            <img
+              src="/static/assets/sear_ch-wordmark-results-on-dark.png"
+              alt=""
+              class="wordmark-mini-image theme-wordmark theme-wordmark-on-dark"
+              decoding="async"
+            >
+          </a>
+
+          <div class="zip-dock zip-dock-topbar" data-zip-shell="topbar">
+            <div class="zip-dock-heading">
+              <span class="zip-dock-label">Local ZIP</span>
+              <button
+                type="button"
+                class="zip-info-button"
+                aria-label="Used only to bias nearby places and maps. No live location tracking."
+                title="Used only to bias nearby places and maps. No live location tracking."
+              >i</button>
+            </div>
+
+            <button
+              type="button"
+              class="zip-dock-trigger"
+              data-zip-toggle
+              aria-expanded="false"
+              aria-controls="topbar-zip-editor"
+            >
+              <span class="zip-dock-value" data-zip-value>78701</span>
+              <span class="zip-dock-trigger-copy">Adjust local area</span>
+            </button>
+
+            <form
+              class="zip-editor"
+              id="topbar-zip-editor"
+              data-zip-form
+              data-zip-editor
+              aria-label="Local ZIP code"
+              hidden
+            >
+              <label class="sr-only" for="topbar-zip-code">Local ZIP code</label>
+              <input
+                id="topbar-zip-code"
+                class="zip-editor-input"
+                type="text"
+                inputmode="numeric"
+                autocomplete="postal-code"
+                pattern="[0-9]{5}"
+                maxlength="5"
+                placeholder="78701"
+                data-zip-input
+              >
+              <button type="submit" class="secondary-button zip-editor-button">Update ZIP</button>
+              <p class="zip-editor-status" data-zip-status aria-live="polite" hidden></p>
+            </form>
+          </div>
+        </div>
+
+        <nav class="topbar-side topbar-right" aria-label="sear_ch controls">
+          <button
+            type="button"
+            class="nav-button nav-icon-button topbar-about-icon"
+            data-open-panel="about"
+            aria-label="Open about"
+            aria-haspopup="dialog"
+            aria-controls="about-panel"
+            aria-expanded="false"
+            title="Open about"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 2.75a9.25 9.25 0 1 0 9.25 9.25A9.26 9.26 0 0 0 12 2.75Zm0 3.3a1.25 1.25 0 1 1-1.25 1.25A1.25 1.25 0 0 1 12 6.05Zm1.5 11.65h-3a1 1 0 0 1 0-2h.5v-4h-.5a1 1 0 0 1 0-2H12a1 1 0 0 1 1 1v5h.5a1 1 0 0 1 0 2Z"/>
+            </svg>
+          </button>
+          <button
+            type="button"
+            class="nav-button nav-icon-button"
+            data-open-panel="preferences"
+            aria-label="Open preferences"
+            aria-haspopup="dialog"
+            aria-controls="preferences-panel"
+            aria-expanded="false"
+            title="Open preferences"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M19.14 12.94a7.43 7.43 0 0 0 .05-.94 7.43 7.43 0 0 0-.05-.94l2.03-1.58a.48.48 0 0 0 .11-.61l-1.92-3.32a.5.5 0 0 0-.58-.22l-2.39.96a7.28 7.28 0 0 0-1.63-.94l-.36-2.54a.49.49 0 0 0-.49-.41h-3.84a.49.49 0 0 0-.49.41l-.36 2.54a7.28 7.28 0 0 0-1.63.94l-2.39-.96a.5.5 0 0 0-.58.22L2.67 8.87a.48.48 0 0 0 .11.61l2.03 1.58a7.43 7.43 0 0 0-.05.94 7.43 7.43 0 0 0 .05.94l-2.03 1.58a.48.48 0 0 0-.11.61l1.92 3.32a.5.5 0 0 0 .58.22l2.39-.96c.5.39 1.05.71 1.63.94l.36 2.54a.49.49 0 0 0 .49.41h3.84a.49.49 0 0 0 .49-.41l.36-2.54a7.28 7.28 0 0 0 1.63-.94l2.39.96a.5.5 0 0 0 .58-.22l1.92-3.32a.48.48 0 0 0-.11-.61ZM12 15.5A3.5 3.5 0 1 1 15.5 12 3.5 3.5 0 0 1 12 15.5Z"/>
+            </svg>
+          </button>
+        </nav>
+      </header>
+
+      <main class="main-shell" id="main-content">
+        <section class="hero" data-hero aria-labelledby="hero-title">
+          <div class="hero-inner">
+            <div class="hero-surface">
+              <h1 class="hero-title hero-title-wordmark" id="hero-title" aria-label="sear_ch">
+                <a href="/" class="hero-title-link" aria-label="Refresh sear_ch home page">
+                  <img
+                    src="/static/assets/sear_ch-wordmark-home-on-light.png"
+                    alt=""
+                    class="hero-title-image theme-wordmark theme-wordmark-on-light"
+                    aria-hidden="true"
+                    decoding="async"
+                  >
+                  <img
+                    src="/static/assets/sear_ch-wordmark-home-on-dark.png"
+                    alt=""
+                    class="hero-title-image theme-wordmark theme-wordmark-on-dark"
+                    aria-hidden="true"
+                    decoding="async"
+                  >
+                </a>
+              </h1>
+
+              <form
+                class="search-form search-form-home"
+                data-search-form="home"
+                role="search"
+                aria-label="Search the web with sear_ch"
+                novalidate
+              >
+                <div class="search-box search-box-home">
+                  <label class="sr-only" for="home-query">Search query</label>
+                  <input
+                    id="home-query"
+                    type="search"
+                    name="q"
+                    placeholder="Search the open web"
+                    autocomplete="off"
+                    aria-autocomplete="list"
+                    aria-controls="home-autocomplete"
+                    aria-expanded="false"
+                    autocapitalize="off"
+                    spellcheck="false"
+                    enterkeyhint="search"
+                    required
+                  >
+                  <button
+                    type="submit"
+                    class="search-tool search-submit-button"
+                    aria-label="Search"
+                    title="Search"
+                  >
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="M9.5 3a6.5 6.5 0 0 1 5.17 10.45l4.44 4.44-1.42 1.42-4.44-4.44A6.5 6.5 0 1 1 9.5 3Zm0 2a4.5 4.5 0 1 0 0 9 4.5 4.5 0 0 0 0-9Z"/>
+                    </svg>
+                  </button>
+                  <div class="search-tools">
+                    <button type="button" class="search-tool search-clear-button" data-search-clear aria-label="Clear search" title="Clear search" hidden>
+                      <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M18.3 5.71 16.89 4.3 12 9.17 7.11 4.3 5.7 5.71 10.59 10.6 5.7 15.49l1.41 1.41L12 12.01l4.89 4.89 1.41-1.41-4.89-4.89 4.89-4.89Z"/>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+                <div
+                  class="autocomplete-panel"
+                  id="home-autocomplete"
+                  data-autocomplete-panel="home"
+                  role="region"
+                  aria-label="Search suggestions"
+                  hidden
+                ></div>
+
+                <div class="hero-actions">
+                  <button type="submit" class="hero-button hero-button-primary">Search</button>
+                  <button type="button" class="hero-button hero-button-secondary" data-lucky-button>I'm Feeling Lucky</button>
+                </div>
+              </form>
+
+              <p class="hero-subtitle" data-hero-subtitle></p>
+
+              <div class="home-service-controls" data-home-service-controls aria-label="Search, AI service, and chat controls">
+                <button
+                  type="button"
+                  class="search-tool search-auto-load-button"
+                  data-auto-load-toggle
+                  aria-label="Search service is on"
+                  aria-pressed="true"
+                  title="Search service is on"
+                >
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M7.25 6.75a4.75 4.75 0 0 1 3.36 1.39l1.39 1.39 1.39-1.39a4.75 4.75 0 1 1 0 6.72L12 13.47l-1.39 1.39a4.75 4.75 0 1 1-3.36-8.11Zm0 1.5a3.25 3.25 0 1 0 2.3 5.55L10.94 12 9.55 10.2a3.23 3.23 0 0 0-2.3-.95Zm9.5 0c-.86 0-1.69.34-2.3.95L13.06 12l1.39 1.8a3.25 3.25 0 1 0 2.3-5.55Z"/>
+                  </svg>
+                </button>
+                <button
+                  type="button"
+                  class="search-tool search-ai-toggle-button"
+                  data-ai-toggle
+                  aria-label="AI service is on"
+                  aria-pressed="true"
+                  title="AI service is on"
+                >
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M11.25 3.5a.75.75 0 0 1 1.5 0v1.25h2A4.25 4.25 0 0 1 19 9v5.5a4.25 4.25 0 0 1-4.25 4.25h-5.5A4.25 4.25 0 0 1 5 14.5V9a4.25 4.25 0 0 1 4.25-4.25h2V3.5ZM9.25 6.25A2.75 2.75 0 0 0 6.5 9v5.5a2.75 2.75 0 0 0 2.75 2.75h5.5a2.75 2.75 0 0 0 2.75-2.75V9a2.75 2.75 0 0 0-2.75-2.75h-5.5Zm-1 4.75a1.25 1.25 0 1 1 2.5 0 1.25 1.25 0 0 1-2.5 0Zm5 0a1.25 1.25 0 1 1 2.5 0 1.25 1.25 0 0 1-2.5 0Zm-3.1 3.25h3.7a.75.75 0 0 1 0 1.5h-3.7a.75.75 0 0 1 0-1.5ZM2.75 10.5a.75.75 0 0 1 .75.75v2.5a.75.75 0 0 1-1.5 0v-2.5a.75.75 0 0 1 .75-.75Zm18.5 0a.75.75 0 0 1 .75.75v2.5a.75.75 0 0 1-1.5 0v-2.5a.75.75 0 0 1 .75-.75Z"/>
+                  </svg>
+                </button>
+                <button
+                  type="button"
+                  class="search-tool search-chat-button"
+                  data-chat-toggle
+                  aria-label="Open AI Chat"
+                  aria-haspopup="dialog"
+                  aria-controls="chat-popout-panel"
+                  aria-expanded="false"
+                  title="Open AI Chat"
+                >
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M12 3.25c-4.55 0-8.25 3.25-8.25 7.25 0 2.34 1.27 4.42 3.25 5.74v3.01a.75.75 0 0 0 1.18.61l2.69-1.88c.37.05.74.07 1.13.07 4.55 0 8.25-3.25 8.25-7.25S16.55 3.25 12 3.25Zm0 1.5c3.72 0 6.75 2.58 6.75 5.75S15.72 16.25 12 16.25c-.42 0-.84-.03-1.24-.1a.75.75 0 0 0-.55.13L8.5 17.48v-1.66a.75.75 0 0 0-.38-.65c-1.77-.98-2.87-2.77-2.87-4.67 0-3.17 3.03-5.75 6.75-5.75Zm-3.1 5.77a1.05 1.05 0 1 1 0-2.1 1.05 1.05 0 0 1 0 2.1Zm3.1 0a1.05 1.05 0 1 1 0-2.1 1.05 1.05 0 0 1 0 2.1Zm3.1 0a1.05 1.05 0 1 1 0-2.1 1.05 1.05 0 0 1 0 2.1Z"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="results-shell" data-results-shell aria-labelledby="results-heading" hidden>
+          <h1 class="sr-only" id="results-heading">sear_ch search results</h1>
+          <header class="results-header">
+            <div class="results-header-card">
+              <a href="/" class="results-wordmark" aria-label="sear_ch home">
+                <img
+                  src="/static/assets/sear_ch-wordmark-results-on-light.png"
+                  alt=""
+                  class="results-wordmark-image theme-wordmark theme-wordmark-on-light"
+                  decoding="async"
+                >
+                <img
+                  src="/static/assets/sear_ch-wordmark-results-on-dark.png"
+                  alt=""
+                  class="results-wordmark-image theme-wordmark theme-wordmark-on-dark"
+                  decoding="async"
+                >
+              </a>
+              <form
+                class="search-form search-form-compact"
+                data-search-form="results"
+                role="search"
+                aria-label="Search results"
+                novalidate
+              >
+                <div class="search-box search-box-results">
+                  <label class="sr-only" for="results-query">Search query</label>
+                  <input
+                    id="results-query"
+                    type="search"
+                    name="q"
+                    placeholder="Refine your search"
+                    autocomplete="off"
+                    aria-autocomplete="list"
+                    aria-controls="results-autocomplete"
+                    aria-expanded="false"
+                    autocapitalize="off"
+                    spellcheck="false"
+                    enterkeyhint="search"
+                    required
+                  >
+                  <button
+                    type="submit"
+                    class="search-tool search-submit-button"
+                    aria-label="Search"
+                    title="Search"
+                  >
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="M9.5 3a6.5 6.5 0 0 1 5.17 10.45l4.44 4.44-1.42 1.42-4.44-4.44A6.5 6.5 0 1 1 9.5 3Zm0 2a4.5 4.5 0 1 0 0 9 4.5 4.5 0 0 0 0-9Z"/>
+                    </svg>
+                  </button>
+                  <div class="search-tools">
+                    <button type="button" class="search-tool search-clear-button" data-search-clear aria-label="Clear search" title="Clear search" hidden>
+                      <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M18.3 5.71 16.89 4.3 12 9.17 7.11 4.3 5.7 5.71 10.59 10.6 5.7 15.49l1.41 1.41L12 12.01l4.89 4.89 1.41-1.41-4.89-4.89 4.89-4.89Z"/>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+                <div
+                  class="autocomplete-panel"
+                  id="results-autocomplete"
+                  data-autocomplete-panel="results"
+                  role="region"
+                  aria-label="Search suggestions"
+                  hidden
+                ></div>
+              </form>
+
+              <div class="results-header-actions" aria-label="Results page controls">
+                <button
+                  type="button"
+                  class="nav-button nav-icon-button"
+                  data-open-panel="about"
+                  aria-label="Open about"
+                  aria-haspopup="dialog"
+                  aria-controls="about-panel"
+                  aria-expanded="false"
+                  title="Open about"
+                >
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M12 2.75a9.25 9.25 0 1 0 9.25 9.25A9.26 9.26 0 0 0 12 2.75Zm0 3.3a1.25 1.25 0 1 1-1.25 1.25A1.25 1.25 0 0 1 12 6.05Zm1.5 11.65h-3a1 1 0 0 1 0-2h.5v-4h-.5a1 1 0 0 1 0-2H12a1 1 0 0 1 1 1v5h.5a1 1 0 0 1 0 2Z"/>
+                  </svg>
+                </button>
+                <button
+                  type="button"
+                  class="nav-button nav-icon-button"
+                  data-open-panel="preferences"
+                  aria-label="Open preferences"
+                  aria-haspopup="dialog"
+                  aria-controls="preferences-panel"
+                  aria-expanded="false"
+                  title="Open preferences"
+                >
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M19.14 12.94a7.43 7.43 0 0 0 .05-.94 7.43 7.43 0 0 0-.05-.94l2.03-1.58a.48.48 0 0 0 .11-.61l-1.92-3.32a.5.5 0 0 0-.58-.22l-2.39.96a7.28 7.28 0 0 0-1.63-.94l-.36-2.54a.49.49 0 0 0-.49-.41h-3.84a.49.49 0 0 0-.49.41l-.36 2.54a7.28 7.28 0 0 0-1.63.94l-2.39-.96a.5.5 0 0 0-.58.22L2.67 8.87a.48.48 0 0 0 .11.61l2.03 1.58a7.43 7.43 0 0 0-.05.94 7.43 7.43 0 0 0 .05.94l-2.03 1.58a.48.48 0 0 0-.11.61l1.92 3.32a.5.5 0 0 0 .58.22l2.39-.96c.5.39 1.05.71 1.63.94l.36 2.54a.49.49 0 0 0 .49.41h3.84a.49.49 0 0 0 .49-.41l.36-2.54a7.28 7.28 0 0 0 1.63-.94l2.39.96a.5.5 0 0 0 .58-.22l1.92-3.32a.48.48 0 0 0-.11-.61ZM12 15.5A3.5 3.5 0 1 1 15.5 12 3.5 3.5 0 0 1 12 15.5Z"/>
+                  </svg>
+                </button>
+              </div>
+
+              <div class="results-toolbar">
+                <div class="results-service-controls" aria-label="Search, AI service, and chat controls">
+                  <button
+                    type="button"
+                    class="search-tool search-auto-load-button"
+                    data-auto-load-toggle
+                    aria-label="Search service is on"
+                    aria-pressed="true"
+                    title="Search service is on"
+                  >
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="M7.25 6.75a4.75 4.75 0 0 1 3.36 1.39l1.39 1.39 1.39-1.39a4.75 4.75 0 1 1 0 6.72L12 13.47l-1.39 1.39a4.75 4.75 0 1 1-3.36-8.11Zm0 1.5a3.25 3.25 0 1 0 2.3 5.55L10.94 12 9.55 10.2a3.23 3.23 0 0 0-2.3-.95Zm9.5 0c-.86 0-1.69.34-2.3.95L13.06 12l1.39 1.8a3.25 3.25 0 1 0 2.3-5.55Z"/>
+                    </svg>
+                  </button>
+                  <button
+                    type="button"
+                    class="search-tool search-ai-toggle-button"
+                    data-ai-toggle
+                    aria-label="AI assistance is on"
+                    aria-pressed="true"
+                    title="AI assistance is on"
+                  >
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="M11.25 3.5a.75.75 0 0 1 1.5 0v1.25h2A4.25 4.25 0 0 1 19 9v5.5a4.25 4.25 0 0 1-4.25 4.25h-5.5A4.25 4.25 0 0 1 5 14.5V9a4.25 4.25 0 0 1 4.25-4.25h2V3.5ZM9.25 6.25A2.75 2.75 0 0 0 6.5 9v5.5a2.75 2.75 0 0 0 2.75 2.75h5.5a2.75 2.75 0 0 0 2.75-2.75V9a2.75 2.75 0 0 0-2.75-2.75h-5.5Zm-1 4.75a1.25 1.25 0 1 1 2.5 0 1.25 1.25 0 0 1-2.5 0Zm5 0a1.25 1.25 0 1 1 2.5 0 1.25 1.25 0 0 1-2.5 0Zm-3.1 3.25h3.7a.75.75 0 0 1 0 1.5h-3.7a.75.75 0 0 1 0-1.5ZM2.75 10.5a.75.75 0 0 1 .75.75v2.5a.75.75 0 0 1-1.5 0v-2.5a.75.75 0 0 1 .75-.75Zm18.5 0a.75.75 0 0 1 .75.75v2.5a.75.75 0 0 1-1.5 0v-2.5a.75.75 0 0 1 .75-.75Z"/>
+                    </svg>
+                  </button>
+                <button
+                  type="button"
+                  class="search-tool search-chat-button"
+                  data-chat-toggle
+                  aria-label="Open AI Chat"
+                  aria-haspopup="dialog"
+                  aria-controls="chat-popout-panel"
+                  aria-expanded="false"
+                  title="Open AI Chat"
+                >
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="M12 3.25c-4.55 0-8.25 3.25-8.25 7.25 0 2.34 1.27 4.42 3.25 5.74v3.01a.75.75 0 0 0 1.18.61l2.69-1.88c.37.05.74.07 1.13.07 4.55 0 8.25-3.25 8.25-7.25S16.55 3.25 12 3.25Zm0 1.5c3.72 0 6.75 2.58 6.75 5.75S15.72 16.25 12 16.25c-.42 0-.84-.03-1.24-.1a.75.75 0 0 0-.55.13L8.5 17.48v-1.66a.75.75 0 0 0-.38-.65c-1.77-.98-2.87-2.77-2.87-4.67 0-3.17 3.03-5.75 6.75-5.75Zm-3.1 5.77a1.05 1.05 0 1 1 0-2.1 1.05 1.05 0 0 1 0 2.1Zm3.1 0a1.05 1.05 0 1 1 0-2.1 1.05 1.05 0 0 1 0 2.1Zm3.1 0a1.05 1.05 0 1 1 0-2.1 1.05 1.05 0 0 1 0 2.1Z"/>
+                    </svg>
+                  </button>
+                </div>
+                <nav class="results-tabs" aria-label="Results views">
+                  <button type="button" class="results-tab" data-results-view="general" aria-pressed="true" aria-current="true">All</button>
+                  <button type="button" class="results-tab" data-results-view="images" aria-pressed="false">Images</button>
+                  <button type="button" class="results-tab" data-results-view="news" aria-pressed="false">News</button>
+                  <button type="button" class="results-tab" data-results-view="maps" aria-pressed="false">Maps</button>
+                </nav>
+              </div>
+
+              <div class="filter-pills results-filter-pills" data-active-filters role="group" aria-label="Active search filters" hidden></div>
+
+              <div class="news-topic-strip" data-news-topic-strip hidden></div>
+
+              <p class="results-summary sr-only" data-results-summary role="status" aria-live="polite" aria-atomic="true">
+                Search the web with private, AI-augmented results.
+              </p>
+            </div>
+          </header>
+
+          <div class="results-layout" data-results-layout>
+            <div class="results-correction" data-results-correction role="status" aria-live="polite" aria-atomic="true" hidden></div>
+            <div class="results-main">
+              <section class="results-stage" data-results-stage hidden></section>
+              <ol class="results" data-results aria-label="Search results" aria-live="polite" aria-busy="false"></ol>
+              <nav class="pagination" data-pagination aria-label="Search result pages" hidden></nav>
+              <section class="refinement-rail" data-refinement-rail hidden aria-label="People also search for"></section>
+            </div>
+
+            <aside class="results-sidebar" data-results-sidebar hidden>
+              <div class="ai-sources-section" data-ai-sources-section hidden>
+                <section class="sidebar-card sidebar-card-secondary ai-sources-card" data-ai-sources-card hidden>
+                  <h2 class="sr-only">AI Overview sources</h2>
+                  <div class="ai-sources-list" data-ai-sources-list></div>
+                </section>
+              </div>
+
+              <section class="sidebar-card places-card" data-places-card hidden>
+                <div class="sidebar-card-head">
+                  <div>
+                    <p class="sidebar-card-kicker">Places</p>
+                    <h2 data-places-heading>Place matches</h2>
+                  </div>
+                  <a
+                    class="panel-link sidebar-inline-link"
+                    data-places-link
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    hidden
+                  >Open map</a>
+                </div>
+                <div class="sidebar-map-shell" data-sidebar-map-shell hidden></div>
+                <div class="places-list" data-places-list></div>
+              </section>
+
+              <div class="results-sidebar-sticky-stack">
+                <section class="view-sidebar-card" data-view-sidebar-card hidden></section>
+
+                <section class="sidebar-card info-card" data-info-card hidden>
+                  <div class="sidebar-card-head">
+                    <div>
+                      <p class="sidebar-card-kicker">Info</p>
+                      <h2 data-info-heading>Overview</h2>
+                    </div>
+                    <a
+                      class="panel-link sidebar-inline-link"
+                      data-info-link
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      hidden
+                    >Open result</a>
+                  </div>
+                  <div class="info-card-media-shell" data-info-media-shell hidden></div>
+                  <div class="info-card-copy">
+                    <p class="info-card-meta" data-info-meta hidden></p>
+                    <p class="info-card-description" data-info-description></p>
+                  </div>
+                </section>
+
+                <section class="sidebar-card sidebar-card-secondary social-card" data-social-card hidden>
+                  <div class="sidebar-card-head">
+                    <div>
+                      <p class="sidebar-card-kicker">Popular On</p>
+                      <h2 data-social-heading>Reddit, YouTube, Amazon</h2>
+                    </div>
+                  </div>
+                  <div class="social-rail" data-social-rail></div>
+                </section>
+
+                <section class="sidebar-card sidebar-card-secondary" data-news-card hidden>
+                  <div class="sidebar-card-head">
+                    <div>
+                      <p class="sidebar-card-kicker">Top News</p>
+                      <h2 data-news-heading>Headlines</h2>
+                    </div>
+                  </div>
+                  <div class="news-rail" data-news-rail></div>
+                </section>
+
+                <section class="sidebar-card sidebar-card-secondary" data-images-card hidden>
+                  <div class="sidebar-card-head">
+                    <p class="sidebar-card-kicker">Related</p>
+                    <h2 data-images-heading>Images</h2>
+                  </div>
+                  <div class="image-rail" data-image-rail></div>
+                </section>
+              </div>
+            </aside>
+          </div>
+        </section>
+      </main>
+
+      <footer class="site-footer">
+        <nav class="site-footer-links" aria-label="Footer">
+          <div class="site-footer-group site-footer-group-left">
+            <button type="button" class="site-footer-link" data-open-panel="footer-searxng" aria-haspopup="dialog" aria-controls="footer-searxng-panel" aria-expanded="false">SearXNG</button>
+            <button type="button" class="site-footer-link" data-open-panel="footer-ollama" aria-haspopup="dialog" aria-controls="footer-ollama-panel" aria-expanded="false">Ollama</button>
+            <button type="button" class="site-footer-link" data-open-panel="footer-how-search-works" aria-haspopup="dialog" aria-controls="footer-how-search-works-panel" aria-expanded="false">How Search works</button>
+          </div>
+          <button type="button" class="site-footer-link site-footer-mission" data-open-panel="footer-mission" aria-haspopup="dialog" aria-controls="footer-mission-panel" aria-expanded="false">
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path d="M4.5 4.25c6.76.1 12.25 5.43 12.6 12.13 1.18-1.72 1.86-3.79 1.9-6.02h1.5c-.08 5.23-3.25 9.73-7.76 11.75l-.62-1.36c1.08-.49 2.08-1.13 2.96-1.91C8.65 18.44 3.5 13.04 3.5 6.5V4.25h1Zm.5 1.54v.71c0 5.62 4.43 10.22 9.98 10.49A10.78 10.78 0 0 0 5 5.79Z"/>
+            </svg>
+            <span>Search and AI should belong to you</span>
+          </button>
+          <div class="site-footer-group site-footer-group-right">
+            <button type="button" class="site-footer-link" data-open-panel="footer-privacy" aria-haspopup="dialog" aria-controls="footer-privacy-panel" aria-expanded="false">Privacy</button>
+            <button type="button" class="site-footer-link" data-open-panel="footer-terms" aria-haspopup="dialog" aria-controls="footer-terms-panel" aria-expanded="false">Terms</button>
+            <button type="button" class="site-footer-link" data-open-panel="footer-settings" aria-haspopup="dialog" aria-controls="footer-settings-panel" aria-expanded="false">Settings</button>
+          </div>
+        </nav>
+      </footer>
+    </div>
+
+    <div class="chat-popout" data-chat-popout hidden>
+      <section
+        class="chat-panel"
+        id="chat-popout-panel"
+        role="dialog"
+        aria-modal="false"
+        aria-labelledby="chat-popout-title"
+        tabindex="-1"
+        data-chat-panel
+      >
+        <header class="chat-head">
+          <div class="chat-title-block">
+            <h2 id="chat-popout-title">AI Chat</h2>
+            <p class="chat-assistant-line">sear_e</p>
+            <p class="chat-session-title" data-chat-session-title>New chat</p>
+          </div>
+          <div class="chat-head-actions">
+            <div class="chat-menu-shell" data-chat-menu-shell>
+              <button
+                type="button"
+                class="chat-icon-button"
+                data-chat-menu-toggle
+                aria-label="Open chat options"
+                aria-haspopup="dialog"
+                aria-expanded="false"
+                aria-controls="chat-options-menu"
+                title="Chat options"
+              >
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M5 12a1.75 1.75 0 1 1 3.5 0A1.75 1.75 0 0 1 5 12Zm5.25 0a1.75 1.75 0 1 1 3.5 0 1.75 1.75 0 0 1-3.5 0Zm5.25 0a1.75 1.75 0 1 1 3.5 0 1.75 1.75 0 0 1-3.5 0Z"/>
+                </svg>
+              </button>
+              <div
+                class="chat-menu-popover"
+                id="chat-options-menu"
+                data-chat-menu
+                role="dialog"
+                aria-label="Chat options"
+                aria-modal="false"
+                hidden
+              >
+                <section class="chat-menu-section">
+                  <div class="chat-menu-section-head">
+                    <span>Recent chats</span>
+                  </div>
+                  <div class="chat-session-list" data-chat-session-list></div>
+                </section>
+
+                <section class="chat-menu-section">
+                  <label class="chat-control-field chat-menu-field">
+                    <span>Model</span>
+                    <select data-chat-model-select aria-label="AI model"></select>
+                  </label>
+                  <label class="chat-context-toggle chat-menu-toggle">
+                    <input type="checkbox" data-chat-context-toggle checked>
+                    <span>Use current search results</span>
+                  </label>
+                  <label class="chat-context-toggle chat-menu-toggle">
+                    <input type="checkbox" data-chat-history-storage-toggle>
+                    <span>Save chat history in this browser</span>
+                  </label>
+                </section>
+
+                <section class="chat-menu-section chat-menu-action-list" aria-label="Conversation actions">
+                  <button type="button" class="chat-menu-action" data-chat-regenerate>
+                    <span>Regenerate last answer</span>
+                  </button>
+                  <button type="button" class="chat-menu-action" data-chat-copy-conversation>
+                    <span>Copy conversation</span>
+                  </button>
+                  <button type="button" class="chat-menu-action" data-chat-export>
+                    <span>Export conversation</span>
+                  </button>
+                  <button type="button" class="chat-menu-action chat-menu-action-danger" data-chat-clear>
+                    <span>Delete chat</span>
+                  </button>
+                </section>
+              </div>
+            </div>
+            <button type="button" class="chat-icon-button" data-chat-new aria-label="New chat" title="New chat">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M11.25 4h1.5v7.25H20v1.5h-7.25V20h-1.5v-7.25H4v-1.5h7.25V4Z"/>
+              </svg>
+            </button>
+            <div class="chat-window-actions" aria-label="Chat window controls">
+              <button type="button" class="chat-icon-button" data-chat-minimize aria-label="Minimize AI Chat" title="Minimize AI Chat">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M5 11.25h14v1.5H5v-1.5Z"/>
+                </svg>
+              </button>
+              <button
+                type="button"
+                class="chat-icon-button"
+                data-chat-fullscreen-toggle
+                aria-label="Expand AI Chat"
+                aria-pressed="false"
+                title="Expand AI Chat"
+              >
+                <svg class="chat-fullscreen-expand-icon" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M5 4h6v1.5H7.56l4.22 4.22-1.06 1.06L6.5 6.56V10H5V4Zm8 0h6v6h-1.5V6.56l-4.22 4.22-1.06-1.06 4.22-4.22H13V4ZM5 14h1.5v3.44l4.22-4.22 1.06 1.06-4.22 4.22H11V20H5v-6Zm12.5 0H19v6h-6v-1.5h3.44l-4.22-4.22 1.06-1.06 4.22 4.22V14Z"/>
+                </svg>
+                <svg class="chat-fullscreen-collapse-icon" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M9.5 4H11v6H5V8.5h3.44L4.22 4.28l1.06-1.06L9.5 7.44V4Zm3.5 0h1.5v3.44l4.22-4.22 1.06 1.06-4.22 4.22H19V10h-6V4ZM5 14h6v6H9.5v-3.44l-4.22 4.22-1.06-1.06 4.22-4.22H5V14Zm8 0h6v1.5h-3.44l4.22 4.22-1.06 1.06-4.22-4.22V20H13v-6Z"/>
+                </svg>
+              </button>
+              <button type="button" class="chat-icon-button" data-chat-close aria-label="Exit AI Chat" title="Exit AI Chat">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M18.3 5.71 16.89 4.3 12 9.17 7.11 4.3 5.7 5.71 10.59 10.6 5.7 15.49l1.41 1.41L12 12.01l4.89 4.89 1.41-1.41-4.89-4.89 4.89-4.89Z"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </header>
+
+        <div class="chat-log" data-chat-log role="log" aria-label="AI Chat conversation" aria-live="polite" aria-relevant="additions text"></div>
+        <form class="chat-form" data-chat-form aria-label="Send AI Chat message">
+          <label class="sr-only" for="chat-message">Message</label>
+          <textarea
+            id="chat-message"
+            data-chat-input
+            rows="1"
+            maxlength="300"
+            placeholder="Ask AI Chat"
+            autocomplete="off"
+            spellcheck="true"
+          ></textarea>
+          <button type="button" class="chat-stop-button" data-chat-stop hidden>Stop</button>
+          <button type="submit" class="chat-send-button" data-chat-submit aria-label="Send message">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M3.65 5.12a.9.9 0 0 1 1.08-1l15.2 6.18a1.82 1.82 0 0 1 0 3.4l-15.2 6.18a.9.9 0 0 1-1.22-1.05l1.36-5.14 7.64-1.69-7.64-1.69-1.22-5.19Z"/>
+            </svg>
+          </button>
+        </form>
+        <p class="chat-status" data-chat-status role="status" aria-live="polite" hidden></p>
+      </section>
+    </div>
+
+    <div class="panel-backdrop" data-panel-backdrop hidden>
+      <div
+        class="panel-card panel-card-info"
+        id="about-panel"
+        data-panel="about"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="about-panel-title"
+        aria-describedby="about-panel-description"
+        tabindex="-1"
+        hidden
+      >
+        <div class="panel-head">
+          <div class="panel-title-row">
+            <span class="panel-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false">
+                <path d="M12 2.75a9.25 9.25 0 1 0 9.25 9.25A9.26 9.26 0 0 0 12 2.75Zm0 1.5A7.75 7.75 0 1 1 4.25 12 7.76 7.76 0 0 1 12 4.25Zm0 2.4a1.05 1.05 0 1 0 0 2.1 1.05 1.05 0 0 0 0-2.1Zm1.05 10.6h-2.1v-5.2h-1.1v-1.5h2.7v6.7h.5v1.5Z"/>
+              </svg>
+            </span>
+            <div>
+              <p class="panel-kicker">About</p>
+              <h2 id="about-panel-title" data-app-name-text>sear_ch</h2>
+            </div>
+          </div>
+          <button type="button" class="panel-close panel-icon-button" data-close-panel aria-label="Close about dialog">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M18.3 5.71 16.89 4.3 12 9.17 7.11 4.3 5.7 5.71 10.59 10.6 5.7 15.49l1.41 1.41L12 12.01l4.89 4.89 1.41-1.41-4.89-4.89 4.89-4.89Z"/>
+            </svg>
+          </button>
+        </div>
+
+        <div class="panel-body" id="about-panel-description">
+          <figure class="panel-about-logo" aria-hidden="true">
+            <img
+              src="/static/assets/sear_ch-wordmark-home-on-light.png"
+              alt=""
+              width="720"
+              height="149"
+              decoding="async"
+            >
+          </figure>
+          <p class="panel-lede">A self-hosted web app for AI-augmented private search.</p>
+          <p>It keeps search, AI answers, and chat in one private browser app you control.</p>
+          <div class="panel-overview-grid">
+            <section class="panel-overview-card">
+              <span class="panel-overview-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" focusable="false">
+                  <path d="M7.5 3.75h7.06L19.75 8.94V20.5a1.75 1.75 0 0 1-1.75 1.75H7.5a1.75 1.75 0 0 1-1.75-1.75v-15A1.75 1.75 0 0 1 7.5 3.75Zm6.5 1.5H7.5a.25.25 0 0 0-.25.25v15c0 .14.11.25.25.25H18a.25.25 0 0 0 .25-.25V9.5H15.5A1.5 1.5 0 0 1 14 8V5.25Zm1.5 1.06V8h1.69L15.5 6.31Z"/>
+                </svg>
+              </span>
+              <div>
+                <h3>Version</h3>
+                <p>1.0</p>
+              </div>
+            </section>
+            <section class="panel-overview-card">
+              <span class="panel-overview-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" focusable="false">
+                  <path d="M12 3.75a4.25 4.25 0 1 0 0 8.5 4.25 4.25 0 0 0 0-8.5Zm0 1.5a2.75 2.75 0 1 1 0 5.5 2.75 2.75 0 0 1 0-5.5Zm0 8.25c-3.34 0-6.25 1.87-6.25 4.25v1.5h12.5v-1.5c0-2.38-2.91-4.25-6.25-4.25Zm0 1.5c2.63 0 4.75 1.32 4.75 2.75H7.25C7.25 16.32 9.37 15 12 15Z"/>
+                </svg>
+              </span>
+              <div>
+                <h3>Author</h3>
+                <p>Shawn SSS</p>
+              </div>
+            </section>
+          </div>
+          <p class="panel-copyright">&copy; <span data-current-year>2026</span> sear_ch. All Rights Reserved.</p>
+        </div>
+      </div>
+
+      <div
+        class="panel-card panel-card-info"
+        id="preferences-panel"
+        data-panel="preferences"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="preferences-panel-title"
+        tabindex="-1"
+        hidden
+      >
+        <div class="panel-head">
+          <div class="panel-title-row">
+            <span class="panel-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false">
+                <path d="M19.14 12.94a7.43 7.43 0 0 0 .05-.94 7.43 7.43 0 0 0-.05-.94l2.03-1.58a.48.48 0 0 0 .11-.61l-1.92-3.32a.5.5 0 0 0-.58-.22l-2.39.96a7.28 7.28 0 0 0-1.63-.94l-.36-2.54a.49.49 0 0 0-.49-.41h-3.84a.49.49 0 0 0-.49.41l-.36 2.54a7.28 7.28 0 0 0-1.63.94l-2.39-.96a.5.5 0 0 0-.58.22L2.67 8.87a.48.48 0 0 0 .11.61l2.03 1.58a7.43 7.43 0 0 0-.05.94 7.43 7.43 0 0 0 .05.94l-2.03 1.58a.48.48 0 0 0-.11.61l1.92 3.32a.5.5 0 0 0 .58.22l2.39-.96c.5.39 1.05.71 1.63.94l.36 2.54a.49.49 0 0 0 .49.41h3.84a.49.49 0 0 0 .49-.41l.36-2.54a7.28 7.28 0 0 0 1.63-.94l2.39.96a.5.5 0 0 0 .58-.22l1.92-3.32a.48.48 0 0 0-.11-.61ZM12 15.5A3.5 3.5 0 1 1 15.5 12 3.5 3.5 0 0 1 12 15.5Z"/>
+              </svg>
+            </span>
+            <div>
+              <p class="panel-kicker">Preferences</p>
+              <h2 id="preferences-panel-title">Experience</h2>
+            </div>
+          </div>
+          <button type="button" class="panel-close panel-icon-button" data-close-panel aria-label="Close preferences dialog">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M18.3 5.71 16.89 4.3 12 9.17 7.11 4.3 5.7 5.71 10.59 10.6 5.7 15.49l1.41 1.41L12 12.01l4.89 4.89 1.41-1.41-4.89-4.89 4.89-4.89Z"/>
+            </svg>
+          </button>
+        </div>
+
+        <form class="panel-body preferences-form" data-preferences-form>
+          <div class="preferences-grid">
+            <section class="preference-section" aria-labelledby="preferences-interface-title">
+              <div class="preference-section-head">
+                <p class="panel-kicker">Experience</p>
+                <h3 id="preferences-interface-title">Look, landing view, and local area</h3>
+              </div>
+              <div class="preference-field-grid">
+                <label class="field">
+                  <span>Theme</span>
+                  <select name="theme">
+                    <option value="system">System</option>
+                    <option value="light">Light</option>
+                    <option value="dark">Dark</option>
+                  </select>
+                </label>
+
+                <label class="field">
+                  <span>Default view</span>
+                  <select name="defaultView">
+                    <option value="general">All</option>
+                    <option value="images">Images</option>
+                    <option value="news">News</option>
+                    <option value="maps">Maps</option>
+                  </select>
+                </label>
+
+                <label class="field">
+                  <span>ZIP</span>
+                  <input
+                    type="text"
+                    name="zipCode"
+                    inputmode="numeric"
+                    autocomplete="postal-code"
+                    pattern="[0-9]{5}"
+                    maxlength="5"
+                    placeholder="78701"
+                  >
+                </label>
+              </div>
+            </section>
+          </div>
+
+          <div class="panel-actions">
+            <button type="submit" class="primary-button">Save preferences</button>
+            <button type="button" class="secondary-button" data-reset-preferences>Reset defaults</button>
+          </div>
+
+          <div
+            class="preferences-reload-confirmation"
+            data-preferences-reload-confirmation
+            role="alertdialog"
+            aria-labelledby="preferences-reload-confirmation-title"
+            aria-describedby="preferences-reload-confirmation-description"
+            hidden
+          >
+            <div class="preferences-reload-copy">
+              <p class="panel-kicker">Reload required</p>
+              <h3 id="preferences-reload-confirmation-title">Save and reload?</h3>
+              <p id="preferences-reload-confirmation-description">
+                These preference changes will reload the page.
+              </p>
+            </div>
+            <div class="preferences-reload-actions">
+              <button type="button" class="primary-button" data-confirm-preferences-save>Save and reload</button>
+              <button type="button" class="secondary-button" data-cancel-preferences-save>Cancel</button>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <div
+        class="panel-card panel-card-info"
+        id="footer-searxng-panel"
+        data-panel="footer-searxng"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="footer-searxng-panel-title"
+        aria-describedby="footer-searxng-panel-description"
+        tabindex="-1"
+        hidden
+      >
+        <div class="panel-head">
+          <div class="panel-title-row">
+            <span class="panel-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false">
+                <path d="M12 3.25a8.75 8.75 0 1 0 0 17.5 8.75 8.75 0 0 0 0-17.5Zm5.99 8h-3.17a14.3 14.3 0 0 0-1.03-5.1 7.27 7.27 0 0 1 4.2 5.1ZM12 5.05c.55.8 1.21 2.73 1.31 6.2h-2.62c.1-3.47.76-5.4 1.31-6.2Zm-5.99 7.7h3.17c.06 2.08.43 3.8 1.03 5.1a7.27 7.27 0 0 1-4.2-5.1Zm5.99 6.2c-.55-.8-1.21-2.73-1.31-6.2h2.62c-.1 3.47-.76 5.4-1.31 6.2Zm1.79-1.1a14.3 14.3 0 0 0 1.03-5.1h3.17a7.27 7.27 0 0 1-4.2 5.1Z"/>
+              </svg>
+            </span>
+            <div>
+              <p class="panel-kicker">Service</p>
+              <h2 id="footer-searxng-panel-title">SearXNG</h2>
+            </div>
+          </div>
+          <button type="button" class="panel-close panel-icon-button" data-close-panel aria-label="Close SearXNG dialog">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M18.3 5.71 16.89 4.3 12 9.17 7.11 4.3 5.7 5.71 10.59 10.6 5.7 15.49l1.41 1.41L12 12.01l4.89 4.89 1.41-1.41-4.89-4.89 4.89-4.89Z"/>
+            </svg>
+          </button>
+        </div>
+        <div class="panel-body" id="footer-searxng-panel-description">
+          <p class="panel-lede">SearXNG is the search backend sear_ch asks for web, news, image, map, and autocomplete results.</p>
+
+          <figure class="panel-service-visual panel-service-visual-searxng" aria-hidden="true">
+            <img
+              src="/static/assets/service-searxng.png"
+              alt=""
+              width="1487"
+              height="343"
+              decoding="async"
+            >
+          </figure>
+
+          <div class="panel-status-grid" aria-label="Search service status">
+            <section class="panel-status-tile">
+              <span class="panel-status-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" focusable="false">
+                  <path d="M12 3.25a8.75 8.75 0 1 0 0 17.5 8.75 8.75 0 0 0 0-17.5Zm5.99 8h-3.17a14.3 14.3 0 0 0-1.03-5.1 7.27 7.27 0 0 1 4.2 5.1ZM12 5.05c.55.8 1.21 2.73 1.31 6.2h-2.62c.1-3.47.76-5.4 1.31-6.2Zm-5.99 7.7h3.17c.06 2.08.43 3.8 1.03 5.1a7.27 7.27 0 0 1-4.2-5.1Zm5.99 6.2c-.55-.8-1.21-2.73-1.31-6.2h2.62c-.1 3.47-.76 5.4-1.31 6.2Zm1.79-1.1a14.3 14.3 0 0 0 1.03-5.1h3.17a7.27 7.27 0 0 1-4.2 5.1Z"/>
+                </svg>
+              </span>
+              <div>
+                <p class="panel-tile-label" data-search-service-title>SearXNG</p>
+                <p data-search-service-meta>Fresh web results from your local search backend.</p>
+              </div>
+            </section>
+          </div>
+
+          <div class="panel-data-flow" aria-label="SearXNG status details">
+            <section>
+              <h3>Connection</h3>
+              <ul class="panel-data-list">
+                <li><strong>Health:</strong> <span data-searxng-health>Checking SearXNG...</span></li>
+                <li><strong>Endpoint:</strong> <span data-searxng-endpoint>Checking endpoint...</span></li>
+                <li><strong>Capabilities:</strong> <span data-searxng-capabilities>Checking capabilities...</span></li>
+              </ul>
+            </section>
+
+            <section>
+              <h3>Search defaults</h3>
+              <ul class="panel-data-list">
+                <li><strong>Profile:</strong> <span data-searxng-profile>Checking defaults...</span></li>
+                <li><strong>Engines:</strong> <span data-searxng-engines>Checking engines...</span></li>
+                <li><strong>Autocomplete:</strong> <span data-searxng-autocomplete>Checking autocomplete...</span></li>
+              </ul>
+            </section>
+          </div>
+
+          <p class="panel-note">Search provider configuration is managed in Settings.</p>
+        </div>
+      </div>
+
+      <div
+        class="panel-card panel-card-info"
+        id="footer-ollama-panel"
+        data-panel="footer-ollama"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="footer-ollama-panel-title"
+        aria-describedby="footer-ollama-panel-description"
+        tabindex="-1"
+        hidden
+      >
+        <div class="panel-head">
+          <div class="panel-title-row">
+            <span class="panel-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false">
+                <path d="M12 3.25a7.75 7.75 0 0 0-7.75 7.75v2.12c0 1.45 1.18 2.63 2.63 2.63h.37v-5H6.88c-.4 0-.76.09-1.1.25a6.25 6.25 0 0 1 12.44 0 2.5 2.5 0 0 0-1.1-.25h-.37v5h.37c.33 0 .65-.06.94-.18-.49 1.12-1.6 1.93-2.91 1.93h-1.4a1.75 1.75 0 1 0 0 1.5h1.4a4.69 4.69 0 0 0 4.6-4.78V11A7.75 7.75 0 0 0 12 3.25Zm-6.25 10.5v-.37c0-.62.51-1.13 1.13-1.13h.37v2h-.37c-.62 0-1.13-.51-1.13-1.13Zm11 0v-1.5h.37c.62 0 1.13.51 1.13 1.13v.37c0 .62-.51 1.13-1.13 1.13h-.37ZM12 18.5a.25.25 0 1 1 0 .5.25.25 0 0 1 0-.5Z"/>
+              </svg>
+            </span>
+            <div>
+              <p class="panel-kicker">Service</p>
+              <h2 id="footer-ollama-panel-title">Ollama</h2>
+            </div>
+          </div>
+          <button type="button" class="panel-close panel-icon-button" data-close-panel aria-label="Close Ollama dialog">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M18.3 5.71 16.89 4.3 12 9.17 7.11 4.3 5.7 5.71 10.59 10.6 5.7 15.49l1.41 1.41L12 12.01l4.89 4.89 1.41-1.41-4.89-4.89 4.89-4.89Z"/>
+            </svg>
+          </button>
+        </div>
+        <div class="panel-body" id="footer-ollama-panel-description">
+          <p class="panel-lede">Ollama is the local model runtime sear_ch uses for AI chat, summaries, follow-up answers, and search-grounded assistance.</p>
+
+          <figure class="panel-service-visual panel-service-visual-ollama" aria-hidden="true">
+            <img
+              src="/static/assets/service-ollama.png"
+              alt=""
+              width="1204"
+              height="407"
+              decoding="async"
+            >
+          </figure>
+
+          <div class="panel-status-grid" aria-label="AI service status">
+            <section class="panel-status-tile">
+              <span class="panel-status-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" focusable="false">
+                  <path d="M12 3.25a7.75 7.75 0 0 0-7.75 7.75v2.12c0 1.45 1.18 2.63 2.63 2.63h.37v-5H6.88c-.4 0-.76.09-1.1.25a6.25 6.25 0 0 1 12.44 0 2.5 2.5 0 0 0-1.1-.25h-.37v5h.37c.33 0 .65-.06.94-.18-.49 1.12-1.6 1.93-2.91 1.93h-1.4a1.75 1.75 0 1 0 0 1.5h1.4a4.69 4.69 0 0 0 4.6-4.78V11A7.75 7.75 0 0 0 12 3.25Zm-6.25 10.5v-.37c0-.62.51-1.13 1.13-1.13h.37v2h-.37c-.62 0-1.13-.51-1.13-1.13Zm11 0v-1.5h.37c.62 0 1.13.51 1.13 1.13v.37c0 .62-.51 1.13-1.13 1.13h-.37ZM12 18.5a.25.25 0 1 1 0 .5.25.25 0 0 1 0-.5Z"/>
+                </svg>
+              </span>
+              <div>
+                <p class="panel-tile-label" data-ai-service-title>Ollama</p>
+                <p data-ai-service-meta>Local model summaries and answers using selected search context.</p>
+              </div>
+            </section>
+          </div>
+
+          <div class="panel-data-flow" aria-label="Ollama status details">
+            <section>
+              <h3>Connection</h3>
+              <ul class="panel-data-list">
+                <li><strong>Health:</strong> <span data-ollama-health>Checking Ollama...</span></li>
+                <li><strong>Endpoint:</strong> <span data-ollama-endpoint>Checking endpoint...</span></li>
+                <li><strong>Models:</strong> <span data-ollama-models>Checking local models...</span></li>
+              </ul>
+            </section>
+
+            <section>
+              <h3>AI defaults</h3>
+              <ul class="panel-data-list">
+                <li><strong>Active model:</strong> <span data-ollama-active-model>Checking model...</span></li>
+                <li><strong>Generation:</strong> <span data-ollama-generation>Checking generation defaults...</span></li>
+                <li><strong>Search context:</strong> <span data-ollama-context>Checking source limits...</span></li>
+              </ul>
+            </section>
+          </div>
+
+          <p class="panel-note">AI service configuration is managed in Settings.</p>
+        </div>
+      </div>
+
+      <div
+        class="panel-card panel-card-info"
+        id="footer-how-search-works-panel"
+        data-panel="footer-how-search-works"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="footer-how-search-works-panel-title"
+        aria-describedby="footer-how-search-works-panel-description"
+        tabindex="-1"
+        hidden
+      >
+        <div class="panel-head">
+          <div class="panel-title-row">
+            <span class="panel-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false">
+                <path d="M10 4.25a5.75 5.75 0 1 0 3.53 10.29l4.22 4.22 1.06-1.06-4.22-4.22A5.75 5.75 0 0 0 10 4.25Zm0 1.5a4.25 4.25 0 1 1 0 8.5 4.25 4.25 0 0 1 0-8.5Zm-.75 2.5h1.5v1.5h1.5v1.5h-1.5v1.5h-1.5v-1.5h-1.5v-1.5h1.5v-1.5Z"/>
+              </svg>
+            </span>
+            <div>
+              <p class="panel-kicker">Guide</p>
+              <h2 id="footer-how-search-works-panel-title">How Search works</h2>
+            </div>
+          </div>
+          <button type="button" class="panel-close panel-icon-button" data-close-panel aria-label="Close how search works dialog">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M18.3 5.71 16.89 4.3 12 9.17 7.11 4.3 5.7 5.71 10.59 10.6 5.7 15.49l1.41 1.41L12 12.01l4.89 4.89 1.41-1.41-4.89-4.89 4.89-4.89Z"/>
+            </svg>
+          </button>
+        </div>
+        <div class="panel-body" id="footer-how-search-works-panel-description">
+          <p class="panel-lede">Search runs through your backend, with optional local AI.</p>
+          <div class="panel-overview-grid">
+            <section class="panel-overview-card">
+              <span class="panel-overview-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" focusable="false">
+                  <path d="M9.5 3.25a6.25 6.25 0 1 0 3.93 11.11l4.61 4.6 1.06-1.06-4.6-4.61A6.25 6.25 0 0 0 9.5 3.25Zm0 1.5a4.75 4.75 0 1 1 0 9.5 4.75 4.75 0 0 1 0-9.5Z"/>
+                </svg>
+              </span>
+              <div>
+                <h3>Search starts here</h3>
+                <p>Your query goes to this sear_ch server, then to the selected search provider such as SearXNG.</p>
+              </div>
+            </section>
+            <section class="panel-overview-card">
+              <span class="panel-overview-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" focusable="false">
+                  <path d="M4.5 5.25h15v3h-15v-3Zm0 5.25h6.75v8.25H4.5V10.5Zm8.25 0h6.75v3h-6.75v-3Zm0 5.25h6.75v3h-6.75v-3Z"/>
+                </svg>
+              </span>
+              <div>
+                <h3>Results get organized</h3>
+                <p>sear_ch formats web, news, image, and map results into the current view, using your filters, engines, language, and time range.</p>
+              </div>
+            </section>
+            <section class="panel-overview-card">
+              <span class="panel-overview-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" focusable="false">
+                  <path d="M12 3.5a4.5 4.5 0 0 0-4.5 4.5c0 3.35 4.5 8.5 4.5 8.5s4.5-5.15 4.5-8.5A4.5 4.5 0 0 0 12 3.5Zm0 1.5a3 3 0 0 1 3 3c0 1.83-1.91 4.73-3 6.19C10.91 12.73 9 9.83 9 8a3 3 0 0 1 3-3Zm0 1.75a1.25 1.25 0 1 0 0 2.5 1.25 1.25 0 0 0 0-2.5ZM5.25 19.5h13.5V21H5.25v-1.5Z"/>
+                </svg>
+              </span>
+              <div>
+                <h3>Local hints are optional</h3>
+                <p>Your ZIP code can bias places, maps, and local news. Map tiles and directions use OpenStreetMap.</p>
+              </div>
+            </section>
+            <section class="panel-overview-card">
+              <span class="panel-overview-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" focusable="false">
+                  <path d="M12 3.25a7.75 7.75 0 0 0-7.75 7.75v2.12c0 1.45 1.18 2.63 2.63 2.63h.37v-5H6.88c-.4 0-.76.09-1.1.25a6.25 6.25 0 0 1 12.44 0 2.5 2.5 0 0 0-1.1-.25h-.37v5h.37c.33 0 .65-.06.94-.18-.49 1.12-1.6 1.93-2.91 1.93h-1.4a1.75 1.75 0 1 0 0 1.5h1.4a4.69 4.69 0 0 0 4.6-4.78V11A7.75 7.75 0 0 0 12 3.25Z"/>
+                </svg>
+              </span>
+              <div>
+                <h3>AI is added only when enabled</h3>
+                <p>When AI is on, sear_ch sends prompts, selected result snippets, chat context, and model settings to Ollama for summaries and answers.</p>
+              </div>
+            </section>
+            <section class="panel-overview-card">
+              <span class="panel-overview-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" focusable="false">
+                  <path d="M12 2.8 5.25 5.55v5.18c0 4.43 2.78 8.52 6.75 10.02 3.97-1.5 6.75-5.59 6.75-10.02V5.55L12 2.8Zm0 1.62 5.25 2.14v4.17c0 3.62-2.13 6.98-5.25 8.41-3.12-1.43-5.25-4.79-5.25-8.41V6.56L12 4.42Z"/>
+                </svg>
+              </span>
+              <div>
+                <h3>You stay in control</h3>
+                <p>Settings control the provider, filters, autocomplete, AI model, response length, and source limits.</p>
+              </div>
+            </section>
+            <section class="panel-overview-card">
+              <span class="panel-overview-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" focusable="false">
+                  <path d="M12 3.25 2.75 19.25h18.5L12 3.25Zm0 3 6.65 11.5H5.35L12 6.25Zm-.75 3.5h1.5v4.5h-1.5v-4.5Zm0 5.75h1.5V17h-1.5v-1.5Z"/>
+                </svg>
+              </span>
+              <div>
+                <h3>Check important results</h3>
+                <p>Search results and AI summaries can be incomplete or wrong, so use original sources before making important decisions.</p>
+              </div>
+            </section>
+          </div>
+        </div>
+      </div>
+
+      <div
+        class="panel-card panel-card-info"
+        id="footer-mission-panel"
+        data-panel="footer-mission"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="footer-mission-panel-title"
+        aria-describedby="footer-mission-panel-description"
+        tabindex="-1"
+        hidden
+      >
+        <div class="panel-head">
+          <div class="panel-title-row">
+            <span class="panel-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false">
+                <path d="M4.5 4.25c6.76.1 12.25 5.43 12.6 12.13 1.18-1.72 1.86-3.79 1.9-6.02h1.5c-.08 5.23-3.25 9.73-7.76 11.75l-.62-1.36c1.08-.49 2.08-1.13 2.96-1.91C8.65 18.44 3.5 13.04 3.5 6.5V4.25h1Zm.5 1.54v.71c0 5.62 4.43 10.22 9.98 10.49A10.78 10.78 0 0 0 5 5.79Z"/>
+              </svg>
+            </span>
+            <div>
+              <p class="panel-kicker">Mission</p>
+              <h2 id="footer-mission-panel-title">Search and AI should belong to you</h2>
+            </div>
+          </div>
+          <button type="button" class="panel-close panel-icon-button" data-close-panel aria-label="Close mission dialog">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M18.3 5.71 16.89 4.3 12 9.17 7.11 4.3 5.7 5.71 10.59 10.6 5.7 15.49l1.41 1.41L12 12.01l4.89 4.89 1.41-1.41-4.89-4.89 4.89-4.89Z"/>
+            </svg>
+          </button>
+        </div>
+        <div class="panel-body" id="footer-mission-panel-description">
+          <p class="panel-lede">sear_ch is part of a larger shift toward private search, local AI, and useful self-hosted software that gives people more freedom to choose, run, and control their tools.</p>
+          <div class="panel-overview-grid">
+            <section class="panel-overview-card">
+              <span class="panel-overview-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" focusable="false">
+                  <path d="M12 2.8 5.25 5.55v5.18c0 4.43 2.78 8.52 6.75 10.02 3.97-1.5 6.75-5.59 6.75-10.02V5.55L12 2.8Zm0 1.62 5.25 2.14v4.17c0 3.62-2.13 6.98-5.25 8.41-3.12-1.43-5.25-4.79-5.25-8.41V6.56L12 4.42Z"/>
+                </svg>
+              </span>
+              <div>
+                <h3>Search without the baggage</h3>
+                <p>People want alternatives to search products built around tracking, ad targeting, and locked-in corporate ecosystems.</p>
+              </div>
+            </section>
+            <section class="panel-overview-card">
+              <span class="panel-overview-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" focusable="false">
+                  <path d="M11.25 3.5a.75.75 0 0 1 1.5 0v1.25h2A4.25 4.25 0 0 1 19 9v5.5a4.25 4.25 0 0 1-4.25 4.25h-5.5A4.25 4.25 0 0 1 5 14.5V9a4.25 4.25 0 0 1 4.25-4.25h2V3.5ZM9.25 6.25A2.75 2.75 0 0 0 6.5 9v5.5a2.75 2.75 0 0 0 2.75 2.75h5.5a2.75 2.75 0 0 0 2.75-2.75V9a2.75 2.75 0 0 0-2.75-2.75h-5.5Zm-.75 4.75a1.15 1.15 0 1 1 2.3 0 1.15 1.15 0 0 1-2.3 0Zm4.7 0a1.15 1.15 0 1 1 2.3 0 1.15 1.15 0 0 1-2.3 0Zm-3.05 3.25h3.7a.75.75 0 0 1 0 1.5h-3.7a.75.75 0 0 1 0-1.5Z"/>
+                </svg>
+              </span>
+              <div>
+                <h3>AI closer to home</h3>
+                <p>Local AI is changing what personal software can be. It gives people freedom to choose their models, run AI locally, and build capable tools without making every task depend on a remote AI platform.</p>
+              </div>
+            </section>
+            <section class="panel-overview-card">
+              <span class="panel-overview-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" focusable="false">
+                  <path d="M12 3.25 4.75 7.48v8.04L12 19.75l7.25-4.23V7.48L12 3.25Zm0 1.74 5.55 3.24L12 11.47 6.45 8.23 12 4.99ZM6.25 9.53l5 2.92v5.13l-5-2.92V9.53Zm6.5 8.05v-5.13l5-2.92v5.13l-5 2.92Z"/>
+                </svg>
+              </span>
+              <div>
+                <h3>Useful apps you can run</h3>
+                <p>Self-hosting is becoming normal for people who want practical tools they can inspect, configure, and keep under their own control.</p>
+              </div>
+            </section>
+            <section class="panel-overview-card">
+              <span class="panel-overview-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" focusable="false">
+                  <path d="M5.5 4.75h13v1.5h-13v-1.5Zm0 13h13v1.5h-13v-1.5ZM7 8.25h10a2.75 2.75 0 1 1 0 5.5H7a2.75 2.75 0 1 1 0-5.5Zm0 1.5a1.25 1.25 0 1 0 0 2.5h10a1.25 1.25 0 1 0 0-2.5H7Z"/>
+                </svg>
+              </span>
+              <div>
+                <h3>Moving search forward</h3>
+                <p>sear_ch brings these pieces together: private search, local AI, and control over how the app runs in one self-hosted app.</p>
+              </div>
+            </section>
+          </div>
+          <p class="panel-note">
+            The goal is not just another search box.<br>
+            It is a path toward software that feels modern, capable, and personally owned.
+          </p>
+        </div>
+      </div>
+
+      <div
+        class="panel-card panel-card-info"
+        id="footer-privacy-panel"
+        data-panel="footer-privacy"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="footer-privacy-panel-title"
+        aria-describedby="footer-privacy-panel-description"
+        tabindex="-1"
+        hidden
+      >
+        <div class="panel-head">
+          <div class="panel-title-row">
+            <span class="panel-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false">
+                <path d="M12 2.8 5.25 5.55v5.18c0 4.43 2.78 8.52 6.75 10.02 3.97-1.5 6.75-5.59 6.75-10.02V5.55L12 2.8Zm0 1.62 5.25 2.14v4.17c0 3.62-2.13 6.98-5.25 8.41-3.12-1.43-5.25-4.79-5.25-8.41V6.56L12 4.42Z"/>
+              </svg>
+            </span>
+            <div>
+              <p class="panel-kicker">Privacy</p>
+              <h2 id="footer-privacy-panel-title">Privacy and safety</h2>
+            </div>
+          </div>
+          <button type="button" class="panel-close panel-icon-button" data-close-panel aria-label="Close privacy dialog">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M18.3 5.71 16.89 4.3 12 9.17 7.11 4.3 5.7 5.71 10.59 10.6 5.7 15.49l1.41 1.41L12 12.01l4.89 4.89 1.41-1.41-4.89-4.89 4.89-4.89Z"/>
+            </svg>
+          </button>
+        </div>
+        <div class="panel-body" id="footer-privacy-panel-description">
+          <p class="panel-lede">
+            Preferences save in this browser; chat history saves only when enabled.
+          </p>
+          <div class="panel-overview-grid">
+            <section class="panel-overview-card">
+              <span class="panel-overview-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" focusable="false">
+                  <path d="M5.5 4.25h13c.97 0 1.75.78 1.75 1.75v12c0 .97-.78 1.75-1.75 1.75h-13c-.97 0-1.75-.78-1.75-1.75V6c0-.97.78-1.75 1.75-1.75Zm0 1.5a.25.25 0 0 0-.25.25v12c0 .14.11.25.25.25h13a.25.25 0 0 0 .25-.25V6a.25.25 0 0 0-.25-.25h-13Zm2 3h9v1.5h-9v-1.5Zm0 3.5h6v1.5h-6v-1.5Z"/>
+                </svg>
+              </span>
+              <div>
+                <h3>What is saved here</h3>
+                <p>A browser preferences record stores theme, view, ZIP, provider, filters, engines, autocomplete, search on/off, and AI settings.</p>
+              </div>
+            </section>
+            <section class="panel-overview-card">
+              <span class="panel-overview-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" focusable="false">
+                  <path d="M6 4.25h12A1.75 1.75 0 0 1 19.75 6v8A1.75 1.75 0 0 1 18 15.75H9.31l-4.06 3.2v-3.2H6A1.75 1.75 0 0 1 4.25 14V6A1.75 1.75 0 0 1 6 4.25Zm0 1.5a.25.25 0 0 0-.25.25v8c0 .14.11.25.25.25h.75v1.61l2.04-1.61H18a.25.25 0 0 0 .25-.25V6a.25.25 0 0 0-.25-.25H6Z"/>
+                </svg>
+              </span>
+              <div>
+                <h3>Chat history</h3>
+                <p>AI Chat is memory-only by default. If browser saving is enabled, a separate chat record stores up to 20 chats and 80 recent messages per chat.</p>
+              </div>
+            </section>
+            <section class="panel-overview-card">
+              <span class="panel-overview-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" focusable="false">
+                  <path d="M4.25 6A1.75 1.75 0 0 1 6 4.25h12A1.75 1.75 0 0 1 19.75 6v12A1.75 1.75 0 0 1 18 19.75H6A1.75 1.75 0 0 1 4.25 18V6Zm1.5 0v12c0 .14.11.25.25.25h12a.25.25 0 0 0 .25-.25V6a.25.25 0 0 0-.25-.25H6a.25.25 0 0 0-.25.25Zm2.5 2.25h7.5v1.5h-7.5v-1.5Zm0 3h5.5v1.5h-5.5v-1.5Zm0 3h7.5v1.5h-7.5v-1.5Z"/>
+                </svg>
+              </span>
+              <div>
+                <h3>What gets sent</h3>
+                <p>Search and autocomplete requests go to this sear_ch server, then to the configured search service. AI prompts, selected result snippets, chat context, model settings, and source limits go through this server to Ollama when AI is enabled.</p>
+              </div>
+            </section>
+            <section class="panel-overview-card">
+              <span class="panel-overview-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" focusable="false">
+                  <path d="M12 3.5a4.5 4.5 0 0 0-4.5 4.5c0 3.35 4.5 8.5 4.5 8.5s4.5-5.15 4.5-8.5A4.5 4.5 0 0 0 12 3.5Zm0 1.5a3 3 0 0 1 3 3c0 1.83-1.91 4.73-3 6.19C10.91 12.73 9 9.83 9 8a3 3 0 0 1 3-3Zm-6.75 14.5h13.5V21H5.25v-1.5Z"/>
+                </svg>
+              </span>
+              <div>
+                <h3>Outside services</h3>
+                <p>Page previews are fetched by this server. Map tiles, directions, opened results, image sources, and remote thumbnails can contact external sites directly from your browser.</p>
+              </div>
+            </section>
+            <section class="panel-overview-card">
+              <span class="panel-overview-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" focusable="false">
+                  <path d="M12 2.8 5.25 5.55v5.18c0 4.43 2.78 8.52 6.75 10.02 3.97-1.5 6.75-5.59 6.75-10.02V5.55L12 2.8Zm0 1.62 5.25 2.14v4.17c0 3.62-2.13 6.98-5.25 8.41-3.12-1.43-5.25-4.79-5.25-8.41V6.56L12 4.42Z"/>
+                </svg>
+              </span>
+              <div>
+                <h3>What sear_ch does not use</h3>
+                <p>sear_ch itself does not use accounts, cookies, IndexedDB, sessionStorage, analytics profiles, or a server-side database for your searches and settings.</p>
+              </div>
+            </section>
+            <section class="panel-overview-card">
+              <span class="panel-overview-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" focusable="false">
+                  <path d="M8.75 4.25h6.5l.5 1.5h3V7.25h-1.12l-.9 11.24a1.75 1.75 0 0 1-1.74 1.61H9.01a1.75 1.75 0 0 1-1.74-1.61l-.9-11.24H5.25V5.75h3l.5-1.5Zm1.08 1.5-.5 1.5h5.34l-.5-1.5H9.83Zm-1.95 1.5.89 11.12c.01.13.12.23.25.23h5.96c.13 0 .24-.1.25-.23l.89-11.12H7.88Z"/>
+                </svg>
+              </span>
+              <div>
+                <h3>Deleting saved data</h3>
+                <p>Use Reset defaults, Delete chat, Memory only chat history, or clear this site&rsquo;s browser data. Browser history and external service logs are separate.</p>
+                <button type="button" class="secondary-button privacy-clear-data-button" data-clear-local-data>Clear local app data</button>
+              </div>
+            </section>
+          </div>
+          <p class="panel-note">For stronger network privacy, use a trusted system VPN. Privacy also depends on your configured search service, AI service, VPN provider, browser, and network setup.</p>
+          <p class="panel-note">Closing sear_ch does not erase saved browser data.</p>
+        </div>
+      </div>
+
+      <div
+        class="panel-card panel-card-info"
+        id="footer-terms-panel"
+        data-panel="footer-terms"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="footer-terms-panel-title"
+        aria-describedby="footer-terms-panel-description"
+        tabindex="-1"
+        hidden
+      >
+        <div class="panel-head">
+          <div class="panel-title-row">
+            <span class="panel-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false">
+                <path d="M7.5 3.75h7.06L19.75 8.94V20.5a1.75 1.75 0 0 1-1.75 1.75H7.5a1.75 1.75 0 0 1-1.75-1.75v-15A1.75 1.75 0 0 1 7.5 3.75Zm6.5 1.5H7.5a.25.25 0 0 0-.25.25v15c0 .14.11.25.25.25H18a.25.25 0 0 0 .25-.25V9.5H15.5A1.5 1.5 0 0 1 14 8V5.25Zm1.5 1.06V8h1.69L15.5 6.31ZM9.25 12h6.5v1.5h-6.5V12Zm0 3h6.5v1.5h-6.5V15Z"/>
+              </svg>
+            </span>
+            <div>
+              <p class="panel-kicker">Legal</p>
+              <h2 id="footer-terms-panel-title">Terms of use</h2>
+            </div>
+          </div>
+          <button type="button" class="panel-close panel-icon-button" data-close-panel aria-label="Close terms dialog">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M18.3 5.71 16.89 4.3 12 9.17 7.11 4.3 5.7 5.71 10.59 10.6 5.7 15.49l1.41 1.41L12 12.01l4.89 4.89 1.41-1.41-4.89-4.89 4.89-4.89Z"/>
+            </svg>
+          </button>
+        </div>
+        <div class="panel-body" id="footer-terms-panel-description">
+          <p class="panel-lede">
+            Plain-language terms: sear_ch is a configurable web app for search, local AI, maps, and media. You control the instance, the services behind it, and how it is exposed.
+          </p>
+          <div class="panel-data-flow">
+            <section>
+              <h3>Using sear_ch</h3>
+              <ul class="panel-data-list">
+                <li>Use the application lawfully and responsibly.</li>
+                <li>Do not use it to harm systems, evade access controls, or violate someone else&rsquo;s rights.</li>
+                <li>Do not rely on search results or AI responses as professional, legal, medical, financial, or safety-critical advice.</li>
+              </ul>
+            </section>
+            <section>
+              <h3>Operator responsibility</h3>
+              <ul class="panel-data-list">
+                <li>Access control, hosting, network exposure, upstream provider rules, and model choices belong to the person running the instance.</li>
+                <li>Safe search, provider, engines, language, time range, ZIP, AI, and search service controls are configurable, but they are not a promise that every upstream result will match your expectations.</li>
+                <li>If you expose sear_ch beyond your own device or trusted network, add appropriate production security, monitoring, rate limits, and usage rules.</li>
+              </ul>
+            </section>
+            <section>
+              <h3>Upstream services</h3>
+              <p>Search, autocomplete, maps, page previews, remote media, and AI features can depend on configured third-party or local services such as SearXNG, OpenStreetMap, websites you open, and Ollama. Those services may have their own terms, policies, limits, logs, and availability.</p>
+            </section>
+            <section>
+              <h3>AI and search output</h3>
+              <p>Results and AI summaries can be incomplete, outdated, inaccurate, offensive, or unavailable. Verify important information with original sources before acting on it.</p>
+            </section>
+            <section>
+              <h3>No guarantee</h3>
+              <p>sear_ch is provided as a local tool and may change, fail, or behave differently depending on configuration, browser storage, network conditions, upstream services, and local models.</p>
+            </section>
+            <section>
+              <h3>Privacy controls</h3>
+              <p>The Privacy modal explains what sear_ch stores in the browser, what it sends to configured services, and how to delete saved local data.</p>
+            </section>
+          </div>
+        </div>
+      </div>
+
+      <div
+        class="panel-card panel-card-wide"
+        id="footer-settings-panel"
+        data-panel="footer-settings"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="footer-settings-panel-title"
+        aria-describedby="footer-settings-panel-description"
+        tabindex="-1"
+        hidden
+      >
+        <div class="panel-head">
+          <div class="panel-title-row">
+            <span class="panel-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false">
+                <path d="M19.14 12.94a7.43 7.43 0 0 0 .05-.94 7.43 7.43 0 0 0-.05-.94l2.03-1.58a.48.48 0 0 0 .11-.61l-1.92-3.32a.5.5 0 0 0-.58-.22l-2.39.96a7.28 7.28 0 0 0-1.63-.94l-.36-2.54a.49.49 0 0 0-.49-.41h-3.84a.49.49 0 0 0-.49.41l-.36 2.54a7.28 7.28 0 0 0-1.63.94l-2.39-.96a.5.5 0 0 0-.58.22L2.67 8.87a.48.48 0 0 0 .11.61l2.03 1.58a7.43 7.43 0 0 0-.05.94 7.43 7.43 0 0 0 .05.94l-2.03 1.58a.48.48 0 0 0-.11.61l1.92 3.32a.5.5 0 0 0 .58.22l2.39-.96c.5.39 1.05.71 1.63.94l.36 2.54a.49.49 0 0 0 .49.41h3.84a.49.49 0 0 0 .49-.41l.36-2.54a7.28 7.28 0 0 0 1.63-.94l2.39.96a.5.5 0 0 0 .58-.22l1.92-3.32a.48.48 0 0 0-.11-.61L19.14 12.94ZM12 15.5A3.5 3.5 0 1 1 15.5 12 3.5 3.5 0 0 1 12 15.5Z"/>
+              </svg>
+            </span>
+            <div>
+              <p class="panel-kicker">Settings</p>
+              <h2 id="footer-settings-panel-title">Search and Local AI</h2>
+            </div>
+          </div>
+          <button type="button" class="panel-close panel-icon-button" data-close-panel aria-label="Close settings dialog">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M18.3 5.71 16.89 4.3 12 9.17 7.11 4.3 5.7 5.71 10.59 10.6 5.7 15.49l1.41 1.41L12 12.01l4.89 4.89 1.41-1.41-4.89-4.89 4.89-4.89Z"/>
+            </svg>
+          </button>
+        </div>
+        <p id="footer-settings-panel-description" class="sr-only">
+          Adjust search provider, filters, autocomplete, local AI, and chat history settings.
+        </p>
+        <form class="panel-body preferences-form" data-settings-form>
+          <div class="preferences-grid">
+            <section class="preference-section" aria-labelledby="settings-search-title">
+              <div class="preference-section-head">
+                <p class="panel-kicker">Search</p>
+                <h3 id="settings-search-title">Provider, filters, and autocomplete</h3>
+              </div>
+              <div class="preference-field-grid">
+                <label class="field">
+                  <span>Provider</span>
+                  <select name="provider" data-provider-select></select>
+                </label>
+
+                <label class="field">
+                  <span>Safe search</span>
+                  <select name="safesearch">
+                    <option value="0">Off</option>
+                    <option value="1">Moderate</option>
+                    <option value="2">Strict</option>
+                  </select>
+                </label>
+
+                <label class="field">
+                  <span>Search service</span>
+                  <select name="autoLoadResults">
+                    <option value="enabled">Enabled</option>
+                    <option value="disabled">Disabled</option>
+                  </select>
+                </label>
+
+                <label class="field">
+                  <span>Language</span>
+                  <input type="text" name="language" placeholder="all">
+                </label>
+
+                <label class="field">
+                  <span>Time range</span>
+                  <select name="timeRange">
+                    <option value="">Any time</option>
+                    <option value="day">Past day</option>
+                    <option value="month">Past month</option>
+                    <option value="year">Past year</option>
+                  </select>
+                </label>
+
+                <label class="field">
+                  <span>News time range</span>
+                  <select name="newsTimeRange">
+                    <option value="">Any time</option>
+                    <option value="day">Past day</option>
+                    <option value="month">Past month</option>
+                    <option value="year">Past year</option>
+                  </select>
+                </label>
+              </div>
+
+              <label class="field field-wide">
+                <span>All engines</span>
+                <input
+                  type="text"
+                  name="engines"
+                  placeholder="google,duckduckgo,wikipedia"
+                  autocapitalize="off"
+                  autocomplete="off"
+                  spellcheck="false"
+                >
+              </label>
+
+              <label class="field field-wide">
+                <span>News engines</span>
+                <input
+                  type="text"
+                  name="newsEngines"
+                  placeholder="google news,duckduckgo news,reuters"
+                  autocapitalize="off"
+                  autocomplete="off"
+                  spellcheck="false"
+                >
+              </label>
+
+              <label class="field field-wide">
+                <span>Image engines</span>
+                <input
+                  type="text"
+                  name="imageEngines"
+                  placeholder="duckduckgo images,qwant images,bing images"
+                  autocapitalize="off"
+                  autocomplete="off"
+                  spellcheck="false"
+                >
+              </label>
+
+              <label class="field field-wide">
+                <span>Map engines</span>
+                <input
+                  type="text"
+                  name="mapEngines"
+                  placeholder="apple maps,openstreetmap,photon"
+                  autocapitalize="off"
+                  autocomplete="off"
+                  spellcheck="false"
+                >
+              </label>
+
+              <label class="field field-wide">
+                <span>Autocomplete provider</span>
+                <input
+                  type="text"
+                  name="autocompleteProvider"
+                  placeholder="google"
+                  autocapitalize="off"
+                  autocomplete="off"
+                  spellcheck="false"
+                >
+              </label>
+              <div class="preference-field-grid">
+                <label class="field">
+                  <span>Autocomplete minimum</span>
+                  <input
+                    type="number"
+                    name="autocompleteMinChars"
+                    min="1"
+                    max="10"
+                    step="1"
+                    inputmode="numeric"
+                    placeholder="3"
+                  >
+                </label>
+
+                <label class="field">
+                  <span>Suggestion count</span>
+                  <input
+                    type="number"
+                    name="autocompleteLimit"
+                    min="1"
+                    max="20"
+                    step="1"
+                    inputmode="numeric"
+                    placeholder="8"
+                  >
+                </label>
+              </div>
+            </section>
+
+            <section class="preference-section" aria-labelledby="settings-local-title">
+              <div class="preference-section-head">
+                <p class="panel-kicker">Local AI</p>
+                <h3 id="settings-local-title">Summaries, model, and chat memory</h3>
+              </div>
+              <div class="preference-field-grid">
+                <label class="field">
+                  <span>Provider</span>
+                  <select name="aiProvider">
+                    <option value="ollama" selected>Ollama</option>
+                  </select>
+                </label>
+
+                <label class="field">
+                  <span>AI summaries</span>
+                  <select name="aiEnabled">
+                    <option value="enabled">Enabled</option>
+                    <option value="disabled">Disabled</option>
+                  </select>
+                </label>
+
+                <label class="field">
+                  <span>AI model</span>
+                  <input
+                    type="text"
+                    name="aiModel"
+                    list="ai-model-options"
+                    placeholder="gemma3:4b"
+                    autocapitalize="off"
+                    autocomplete="off"
+                    spellcheck="false"
+                  >
+                  <datalist id="ai-model-options" data-ai-model-options></datalist>
+                </label>
+
+                <label class="field">
+                  <span>Temperature</span>
+                  <input
+                    type="number"
+                    name="aiTemperature"
+                    min="0"
+                    max="2"
+                    step="0.05"
+                    inputmode="decimal"
+                    placeholder="0.2"
+                  >
+                </label>
+
+                <label class="field">
+                  <span>Response tokens</span>
+                  <input
+                    type="number"
+                    name="aiNumPredict"
+                    min="32"
+                    max="4096"
+                    step="1"
+                    inputmode="numeric"
+                    placeholder="240"
+                  >
+                </label>
+
+                <label class="field">
+                  <span>AI source limit</span>
+                  <input
+                    type="number"
+                    name="aiSourceLimit"
+                    min="1"
+                    max="10"
+                    step="1"
+                    inputmode="numeric"
+                    placeholder="5"
+                  >
+                </label>
+
+                <label class="field">
+                  <span>Auto-expand AI Overview</span>
+                  <select name="aiOverviewExpanded">
+                    <option value="disabled">Disabled</option>
+                    <option value="enabled">Enabled</option>
+                  </select>
+                </label>
+
+                <label class="field">
+                  <span>AI Chat history</span>
+                  <select name="chatHistoryStorage">
+                    <option value="memory">Memory only</option>
+                    <option value="browser">Save in browser</option>
+                  </select>
+                </label>
+              </div>
+            </section>
+          </div>
+
+          <p class="panel-note">Advanced defaults live in <code>.env</code> and require a restart.</p>
+
+          <div class="panel-actions">
+            <button type="submit" class="primary-button">Save settings</button>
+            <button type="button" class="secondary-button" data-reset-preferences>Reset defaults</button>
+          </div>
+
+          <div
+            class="preferences-reload-confirmation"
+            data-preferences-reload-confirmation
+            role="alertdialog"
+            aria-labelledby="settings-reload-confirmation-title"
+            aria-describedby="settings-reload-confirmation-description"
+            hidden
+          >
+            <div class="preferences-reload-copy">
+              <p class="panel-kicker">Reload required</p>
+              <h3 id="settings-reload-confirmation-title">Save and reload?</h3>
+              <p id="settings-reload-confirmation-description">
+                These setting changes will reload the page.
+              </p>
+            </div>
+            <div class="preferences-reload-actions">
+              <button type="button" class="primary-button" data-confirm-preferences-save>Save and reload</button>
+              <button type="button" class="secondary-button" data-cancel-preferences-save>Cancel</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="image-preview-backdrop" data-image-preview-backdrop hidden>
+      <aside
+        class="image-preview-panel"
+        data-image-preview-panel
+        role="dialog"
+        aria-modal="false"
+        aria-labelledby="image-preview-title"
+        tabindex="-1"
+      >
+        <div class="image-preview-head">
+          <div>
+            <p class="panel-kicker">Image Preview</p>
+            <h2 id="image-preview-title" data-image-preview-title>Preview</h2>
+          </div>
+          <button type="button" class="panel-close" data-close-image-preview aria-label="Close image preview">&times;</button>
+        </div>
+
+        <div class="image-preview-stage" data-image-preview-stage></div>
+
+        <div class="image-preview-copy">
+          <div class="image-preview-meta-grid">
+            <div class="image-preview-meta-block">
+              <p class="image-preview-meta-label">Site</p>
+              <p class="image-preview-meta-value" data-image-preview-site>Source</p>
+            </div>
+            <div class="image-preview-meta-block">
+              <p class="image-preview-meta-label">Details</p>
+              <p class="image-preview-meta-value" data-image-preview-details>Image result</p>
+            </div>
+          </div>
+
+          <p class="image-preview-url" data-image-preview-url hidden></p>
+          <p class="image-preview-snippet" data-image-preview-snippet hidden></p>
+
+          <div class="image-preview-actions">
+            <a
+              class="primary-button image-preview-action"
+              data-image-preview-open
+              target="_blank"
+              rel="noopener noreferrer"
+              hidden
+            >Open page</a>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <div class="result-details-backdrop" data-result-details-backdrop hidden>
+      <aside
+        class="result-details-panel"
+        data-result-details-panel
+        role="dialog"
+        aria-modal="false"
+        aria-labelledby="result-details-title"
+        tabindex="-1"
+      >
+        <div class="result-details-head">
+          <div class="result-details-source">
+            <span class="result-details-source-icon" data-result-details-source-icon aria-hidden="true">W</span>
+            <div class="result-details-source-copy">
+              <p class="result-details-source-name" data-result-details-source-name>Website</p>
+              <p class="result-details-source-meta" data-result-details-source-meta hidden></p>
+            </div>
+          </div>
+          <button type="button" class="panel-close" data-close-result-details aria-label="Close result details">&times;</button>
+        </div>
+
+        <div class="result-details-hero">
+          <div class="result-details-hero-copy">
+            <h2 id="result-details-title" data-result-details-title>Result</h2>
+            <p class="result-details-url" data-result-details-url hidden></p>
+          </div>
+          <a
+            class="primary-button result-details-visit"
+            data-result-details-open
+            target="_blank"
+            rel="noopener noreferrer"
+            hidden
+          >Visit</a>
+        </div>
+
+        <p class="result-details-snippet" data-result-details-snippet hidden></p>
+
+        <div class="result-details-actions">
+          <button type="button" class="secondary-button result-details-action" data-result-details-copy>Copy link</button>
+        </div>
+
+        <section class="result-details-section">
+          <h3 class="result-details-section-title">About the source</h3>
+          <div class="result-details-facts" data-result-details-facts></div>
+          <p class="result-details-about" data-result-details-about></p>
+        </section>
+
+        <section class="result-details-section">
+          <h3 class="result-details-section-title">Your search &amp; this result</h3>
+          <ul class="result-details-list" data-result-details-list></ul>
+        </section>
+
+        <p class="result-details-status" data-result-details-status aria-live="polite" hidden></p>
+      </aside>
+    </div>
+  </body>
+</html>
