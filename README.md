@@ -1,10 +1,14 @@
 <p align="center">
-    <img width="1200" height="475" src="logo.png" alt="Screenshot">
+    <img width="1200" height="475" src="logo.png" alt="Logo">
 </p>
 
 # sear_ch
 
 `sear_ch` is a self-hosted web app for AI-augmented private search. It combines SearXNG results with local AI answers, context, and chat.
+
+<p align="center">
+    <img width="1200" height="475" src="screenshot.png" alt="Screenshot">
+</p>
 
 ## What It Does
 
